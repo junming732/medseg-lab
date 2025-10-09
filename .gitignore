@@ -17,3 +17,8 @@ results/
 # VSCode / IDE
 .vscode/
 .idea/
+
+# Lightning logs and checkpoints
+lightning_logs/
+docs/progress/lightning_logs/
+*.ckpt

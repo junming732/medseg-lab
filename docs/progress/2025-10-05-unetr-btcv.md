@@ -1,22 +1,16 @@
-# 2025-10-05 — UNETR baseline (synthetic smoke)
-
+# 2025-10-09 — UNETR baseline (synthetic)
 ## Goal
-Stand up a Lightning training loop around MONAI's UNETR and validate CI can pass on CPU with synthetic data.
-
-## Setup
-- Config: `configs/unetr/btcv.yaml` (synthetic=true)
-- Commit: <SHA after PR>
-
+Verify end-to-end training on synthetic 3D data using UNETR.
+## Config
+configs/unetr/btcv.yaml (synthetic=true), epochs=1, commit <SHA>
 ## Results
-- Dice (synthetic): ~0.5–0.7 after 1–3 epochs (non-representative)
-
+val/dice: 0.62 (synthetic, not representative)
 ## What worked
-- End-to-end training loop.
-- Deterministic seed and small 3D volumes keep runtime minimal.
-
+- CUDA/cuDNN fixed.
+- Lightning logs recorded to docs/progress/lightning_logs/.
 ## What didn’t
-- Synthetic data is noisy; real dice will differ.
-
+- Synthetic metrics noisy.
+- Need BTCV dataset loader.
 ## Next steps
-- Add real BTCV/MSD dataloaders and dataset cards.
-- Scale img_size, epochs, and augmentations.
+- Add BTCV real data support.
+- Add CSV logging for metrics.
