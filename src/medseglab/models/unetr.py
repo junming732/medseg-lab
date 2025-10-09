@@ -43,7 +43,6 @@ class UNETRLightning(pl.LightningModule):
             hidden_size=feature_size*24,
             mlp_dim=feature_size*48,
             num_heads=4,
-            pos_embed="perceptron",
             norm_name="instance",
             conv_block=True,
             res_block=True,
