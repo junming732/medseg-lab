@@ -1,0 +1,19 @@
+# Core dependencies
+torch>=2.0.0
+torchvision>=0.15.0
+numpy>=1.21.0
+scipy>=1.7.0
+
+# Data handling
+nibabel>=3.2.0
+PyYAML>=6.0
+
+# Training utilities
+tqdm>=4.62.0
+
+# Optional dependencies
+# GeodisTK>=0.1.6  # Uncomment if using geodesic encoder
+
+# Development
+pytest>=7.0.0
+black>=22.0.0

@@ -1,0 +1,92 @@
+# Configuration for FastSAM3D Interactive Training
+# FastSAM3D: Fast Segment Anything Model for 3D Medical Images
+
+experiment:
+  name: "fastsam3d_interactive"
+  seed: 42
+  output_dir: "./outputs"
+
+# Data configuration
+data:
+  dataset: "fastsam3d"  # Uses FastSAM3D dataset adapter
+  data_root: "/path/to/lits/data"  # UPDATE THIS PATH
+  patch_size: [128, 128, 128]  # FastSAM3D works best with 128^3
+  batch_size: 2  # Smaller batch due to larger model
+  num_workers: 4
+  num_classes: 3  # background, liver, tumor
+
+  # Output format: 'sam' for SAM-style points, 'dense' for channels
+  output_format: "dense"  # Use 'dense' for easier integration
+
+  # If using dense format, specify encoder
+  encoder:
+    type: "gaussian"  # Can be gaussian, disk, binary
+    sigma: 3.0
+
+  # Prompt simulator settings
+  simulator:
+    n_points_range: [1, 5]
+    positive_ratio: 0.7
+    error_simulation: true
+    noise_std: 2.0
+    sampling_strategy: "mixed"
+
+# Model configuration
+model:
+  type: "fastsam3d_interactive"
+  in_channels: 1
+  out_channels: 3
+  image_size: [128, 128, 128]
+  embed_dim: 192  # ViT-Tiny dimension
+  depth: 6  # FastSAM3D uses 6 layers (distilled from 12)
+  num_heads: 6
+
+  # Pretrained weights (optional)
+  use_pretrained: false
+  pretrained_path: null  # Set to path if you have FastSAM3D weights
+  # Download from: https://github.com/arcadelab/FastSAM3D
+
+# Training configuration
+training:
+  max_epochs: 200  # FastSAM3D trains faster
+  learning_rate: 0.0001  # Lower LR for fine-tuning
+  weight_decay: 0.0001
+  optimizer: "adamw"  # AdamW is better for transformers
+  scheduler: "cosine"
+  warmup_epochs: 10
+
+  # Loss weights
+  loss:
+    dice_weight: 0.5
+    ce_weight: 0.5
+
+  # Validation
+  val_interval: 5
+  save_top_k: 3
+
+  # Prompt dropout
+  prompt_dropout: 0.1
+
+# Hardware
+hardware:
+  gpus: 1
+  precision: 16  # Mixed precision recommended
+  amp_backend: "native"
+
+# Logging
+logging:
+  log_every_n_steps: 50
+  save_predictions: true
+  num_prediction_samples: 5
+
+# FastSAM3D specific settings
+fastsam3d:
+  # If you want to use SAM-style training (advanced)
+  use_sam_style_training: false
+
+  # Sparse flash attention (if implemented)
+  use_sparse_attention: false
+
+  # Knowledge distillation (if training from scratch)
+  use_distillation: false
+  teacher_model: null

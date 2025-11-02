@@ -10,8 +10,6 @@ __pycache__/
 dist/
 build/
 # Data & outputs
-data/
-!src/medseglab/data
 runs/
 results/
 # VSCode / IDE

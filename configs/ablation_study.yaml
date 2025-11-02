@@ -1,0 +1,83 @@
+# Ablation Study Configuration
+# Compares all prompt encoding methods INCLUDING FastSAM3D
+
+ablation_study:
+  name: "prompt_encoding_ablation"
+  base_config: "configs/gaussian_s3.yaml"
+
+  experiments:
+    # Binary encoding
+    - name: "binary"
+      encoder:
+        type: "binary"
+
+    # Gaussian with different sigmas
+    - name: "gaussian_s2"
+      encoder:
+        type: "gaussian"
+        sigma: 2.0
+
+    - name: "gaussian_s3"
+      encoder:
+        type: "gaussian"
+        sigma: 3.0
+
+    - name: "gaussian_s5"
+      encoder:
+        type: "gaussian"
+        sigma: 5.0
+
+    - name: "gaussian_s7"
+      encoder:
+        type: "gaussian"
+        sigma: 7.0
+
+    # Disk with different radii
+    - name: "disk_r2"
+      encoder:
+        type: "disk"
+        radius: 2
+
+    - name: "disk_r3"
+      encoder:
+        type: "disk"
+        radius: 3
+
+    - name: "disk_r5"
+      encoder:
+        type: "disk"
+        radius: 5
+
+    # Geodesic (if GeodisTK available)
+    - name: "geodesic_s5_l1"
+      encoder:
+        type: "geodesic"
+        sigma: 5.0
+        lamb: 1.0
+        iterations: 2
+
+    # FastSAM3D with different encoders
+    - name: "fastsam3d_gaussian"
+      model_type: "fastsam3d"
+      encoder:
+        type: "gaussian"
+        sigma: 3.0
+
+    - name: "fastsam3d_disk"
+      model_type: "fastsam3d"
+      encoder:
+        type: "disk"
+        radius: 3
+
+# Evaluation metrics to compare
+metrics:
+  - "dice_score"
+  - "hausdorff_distance_95"
+  - "average_surface_distance"
+  - "training_time"
+  - "inference_time"
+  - "model_parameters"
+
+# Number of random seeds for each experiment
+n_seeds: 3
+seeds: [42, 123, 456]
