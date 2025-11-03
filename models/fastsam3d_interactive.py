@@ -252,18 +252,15 @@ class FastSAM3DInteractive(nn.Module):
         return logits
 
     def load_pretrained(self, checkpoint_path: str):
-        """
-        Load pretrained FastSAM3D weights.
-
-        Note: You need to download weights from:
-        https://github.com/arcadelab/FastSAM3D
-        """
+        """Load pretrained FastSAM3D weights."""
         print(f"Loading pretrained weights from {checkpoint_path}")
-        checkpoint = torch.load(checkpoint_path, map_location='cpu')
+        checkpoint = torch.load(checkpoint_path, map_location='cpu', weights_only=False)  # ← Add weights_only=False
 
         # Load weights (may need adaptation based on checkpoint format)
         if 'model_state_dict' in checkpoint:
             self.load_state_dict(checkpoint['model_state_dict'], strict=False)
+        elif 'state_dict' in checkpoint:
+            self.load_state_dict(checkpoint['state_dict'], strict=False)
         else:
             self.load_state_dict(checkpoint, strict=False)
 

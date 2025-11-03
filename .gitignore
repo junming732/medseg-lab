@@ -13,6 +13,9 @@ build/
 # Data & outputs
 runs/
 results/
+outputs/
+data/lits
+pretrained_weights/
 # VSCode / IDE
 .vscode/
 .idea/

@@ -105,14 +105,30 @@ def create_dataloaders(train_dataset, val_dataset, config):
 def create_model(config, device):
     """Create model and move to device."""
     model_config = config['model']
+    model_type = model_config.get('type', 'unet3d_interactive')
 
-    model = UNet3DInteractive(
-        in_channels=model_config['in_channels'],
-        prompt_channels=model_config['prompt_channels'],
-        out_channels=model_config['out_channels'],
-        base_filters=model_config['base_filters'],
-        depth=model_config['depth']
-    )
+    if model_type == 'fastsam3d_interactive':
+        from models import FastSAM3DInteractive
+        model = FastSAM3DInteractive(
+            in_channels=model_config['in_channels'],
+            out_channels=model_config['out_channels'],
+            image_size=tuple(model_config['image_size']),
+            embed_dim=model_config.get('embed_dim', 192),
+            depth=model_config.get('depth', 6),
+            num_heads=model_config.get('num_heads', 6),
+            use_pretrained=model_config.get('use_pretrained', False),
+            pretrained_path=model_config.get('pretrained_path', None)
+        )
+    else:
+        # Default: U-Net
+        from models import UNet3DInteractive
+        model = UNet3DInteractive(
+            in_channels=model_config['in_channels'],
+            prompt_channels=model_config['prompt_channels'],
+            out_channels=model_config['out_channels'],
+            base_filters=model_config['base_filters'],
+            depth=model_config['depth']
+        )
 
     model = model.to(device)
 
@@ -130,6 +146,12 @@ def create_optimizer_scheduler(model, config, steps_per_epoch):
     # Optimizer
     if train_config['optimizer'] == 'adam':
         optimizer = optim.Adam(
+            model.parameters(),
+            lr=train_config['learning_rate'],
+            weight_decay=train_config['weight_decay']
+        )
+    elif train_config['optimizer'] == 'adamw':
+        optimizer = optim.AdamW(
             model.parameters(),
             lr=train_config['learning_rate'],
             weight_decay=train_config['weight_decay']
@@ -186,6 +208,10 @@ def train_epoch(model, train_loader, criterion, optimizer, scheduler, device, co
         # Forward pass
         optimizer.zero_grad()
         logits = model(image, prompts)
+        # debug
+        print("logits:", logits.shape)
+        print("mask:", mask.shape)
+
         loss = criterion(logits, mask)
 
         # Backward pass
