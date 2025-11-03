@@ -189,16 +189,30 @@ class LiTSInteractiveDataset(Dataset):
         return volume
 
     def _extract_random_patch(
-        self,
-        volume: np.ndarray,
-        segmentation: np.ndarray
-    ) -> Dict[str, np.ndarray]:
+    self,
+    volume: np.ndarray,
+    segmentation: np.ndarray
+) -> Dict[str, np.ndarray]:
         """
         Extract random 3D patch from volume.
         Try to sample patches that contain foreground.
+        Pads volume if smaller than patch_size.
         """
         D, H, W = volume.shape
         pd, ph, pw = self.patch_size
+
+        # Pad if volume is smaller than patch size
+        if D < pd or H < ph or W < pw:
+            pad_d = max(0, pd - D)
+            pad_h = max(0, ph - H)
+            pad_w = max(0, pw - W)
+
+            volume = np.pad(volume, ((0, pad_d), (0, pad_h), (0, pad_w)),
+                        mode='constant', constant_values=volume.min())
+            segmentation = np.pad(segmentation, ((0, pad_d), (0, pad_h), (0, pad_w)),
+                                mode='constant', constant_values=0)
+
+            D, H, W = volume.shape
 
         # Find regions with foreground
         fg_coords = np.where(segmentation > 0)
