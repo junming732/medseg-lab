@@ -10,9 +10,9 @@ experiment:
 data:
   dataset: "fastsam3d"  # Uses FastSAM3D dataset adapter
   data_root: "./data/lits"
-  patch_size: [128, 128, 128]  # FastSAM3D works best with 128^3
+  patch_size: [64, 64, 64]  # FastSAM3D works best with 128^3
   batch_size: 1  # Smaller batch due to larger model
-  num_workers: 2
+  num_workers: 0
   num_classes: 3  # background, liver, tumor
 
   # Output format: 'sam' for SAM-style points, 'dense' for channels
@@ -51,7 +51,7 @@ model:
 training:
   #max_epochs: 200  # FastSAM3D trains faster
   max_epochs: 3
-  learning_rate: 0.0001  # Lower LR for fine-tuning
+  learning_rate: 0.0005  # Lower LR for fine-tuning
   weight_decay: 0.0001
   optimizer: "adamw"  # AdamW is better for transformers
   scheduler: "cosine"
