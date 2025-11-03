@@ -9,7 +9,7 @@ experiment:
 # Data configuration
 data:
   dataset: "fastsam3d"  # Uses FastSAM3D dataset adapter
-  data_root: "/path/to/lits/data"  # UPDATE THIS PATH
+  data_root: "~/LiTS/Training-Batch-1"
   patch_size: [128, 128, 128]  # FastSAM3D works best with 128^3
   batch_size: 2  # Smaller batch due to larger model
   num_workers: 4
